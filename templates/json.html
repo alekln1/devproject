@@ -1,0 +1,9 @@
+[
+{% block content %}
+	{% set coma = '' %}
+	{% for ip in ipList %}
+                {{coma}}{'address':'{{ ip.address }}', 'dateCreated':'{{ ip.dateCreated }}'}
+				{% set coma = ', ' %}
+	{% endfor %}
+{% endblock %}
+]
