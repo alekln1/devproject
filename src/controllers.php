@@ -1,9 +1,11 @@
 <?php
 $app['debug']=true;
 $app->get('/', 'App\IndexController::indexAction');
-$app->get('/getActiveConnections', 'App\IndexController::getConnection');
-$app->get('/setConnection', 'App\IndexController::setConnection');
+$app->get('/connections', 'App\IndexController::getConnection');
+$app->put('/connections/{id}', 'App\IndexController::setConnection');
 
+
+//$app->
 $app->error(function (\Exception $e, $code) use ($app) {
     if ($app['debug']) {
 

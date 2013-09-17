@@ -73,15 +73,15 @@ class IndexController{
 		
 		$this->cleanUp($app);
 		
-		$date =  date('Y-m-d H:i:s');
+		// $date =  date('Y-m-d H:i:s');
 		
-		$currentDate = strtotime($date);
+		// $currentDate = strtotime($date);
 		
-		$oldDate = $currentDate-(60*10);
+		// $oldDate = $currentDate-(60*10);
 		
-		$formatDate = date("Y-m-d H:i:s", $oldDate);
+		// $formatDate = date("Y-m-d H:i:s", $oldDate);
 		
-///		$data = $app['db']->fetchAll('SELECT * FROM address where lastActivity >= ?', array($formatDate));
+		// $data = $app['db']->fetchAll('SELECT * FROM address where lastActivity >= ?', array($formatDate));
 		$data = $app['db']->fetchAll('SELECT * FROM address ORDER By lastActivity DESC');
 		
 		return $app->json($data, 200);
@@ -89,14 +89,27 @@ class IndexController{
 	
 	//setter
 	public function setConnection(Request $request, Application $app){
-		print "{}";
+
+		$id = $request->attributes->get('id');
+
+		if($id != null){
+		
+			if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+			
+				$data = json_decode($request->getContent(), true)['data'];
+				
+				return $this->updateAddressComment($id,  $data['customComment'], $app);
+			}
+		}
+		return false;
 	}
 	
-	private function updateAddress(Request $request, Application $app){	
+	//updates comment by its id
+	private function updateAddressComment($id, $comment, $app){
 		
 		$sql = "UPDATE address SET customComment = ? WHERE id = ?";
 		
-		return $app['db']->executeUpdate($sql, array('comment', (int) $id));
+		return $app['db']->executeUpdate($sql, array($comment, (int) $id));
 		
 	}
 	

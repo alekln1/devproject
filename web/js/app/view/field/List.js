@@ -25,7 +25,7 @@ Ext.define('Regio.view.field.List' ,{
 	dockedItems: [{
 			dock: 'bottom',
 			xtype:'pagingtoolbar',
-            store: Ext.getStore('Fields'),
+            store: 'Fields',
             displayInfo: true,
             displayMsg: 'Displaying topics {0} - {1} of {2}',
             emptyMsg: "No topics to display"
@@ -33,31 +33,21 @@ Ext.define('Regio.view.field.List' ,{
 	
 	listeners: {
 		'render': function(grid){
-			
 			var view = grid.getView();    // Capture the grid's view.
 			grid.tip = Ext.create('Ext.tip.ToolTip', {
 				target: view.el,          // The overall target element.
 				delegate: view.itemSelector, // Each grid row causes its own seperate show and hide.
 				trackMouse: true,         // Moving within the row should not hide the tip.
-				renderTo: Ext.getBody(),  // Render immediately so that tip.body can be referenced prior to the first show.
-				listeners: {              // Change content dynamically depending on which element triggered the show.
-					beforeshow: function(tip) {
-						//tip.update('Over company "' + view.getRecord(tip.triggerElement).get('company') + '"');
-					}
-				}
+				renderTo: Ext.getBody()
 			})
 		}
 	},
 	// appends edit form window 
 
     initComponent: function() {
-		//this.initFormComponent();
 		Ext.apply(this, {
             plugins: [
-				new Ext.grid.plugin.RowEditing({clicksToEdit: 1}),
-				/*new Ext.grid.plugin.CellEditing({
-					clicksToEdit: 1
-				})*/
+				new Ext.grid.plugin.RowEditing({clicksToEdit: 1})
 		]});
 		
 		// bottom bar actions
@@ -79,7 +69,7 @@ Ext.define('Regio.view.field.List' ,{
 				dataIndex: 'requestBrowser',
 				css: 'text-align: center;',
 				sortable:true,
-				width: 100//,
+				width: 400//,
 			},
 			{
 				header: 'Date visited',

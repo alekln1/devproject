@@ -1,6 +1,6 @@
 Ext.define('Regio.store.Fields', {
     extend: 'Ext.data.Store',
-	
+	intervalLoader:null,
 	// model that describes fieldlist to request
     model: 'Regio.model.Field',
 	autoCommit :true,
@@ -9,12 +9,8 @@ Ext.define('Regio.store.Fields', {
 	autoSync:true,
     proxy: {
         type: 'rest',
-        url: 'index.php/getActiveConnections',
-		//update: 'index.php/setConnectionData',
-		api:{
-			read: 'index.php/getActiveConnections',
-			write: 'index.php/setConnectionData',
-		},
+		url:'index.php/connections',
+		
         reader: {
             type: 'json',
             root: 'data',
@@ -30,17 +26,28 @@ Ext.define('Regio.store.Fields', {
 	
     },
 	listeners : {
+		// refresh only if has one connection
+        load: function(store, records, success) {
+			if(records.length <= 1 && this.intervalLoader == null){
+				var _this = this;
+				
+				this.intervalLoader = window.setInterval(function(){
+					_this.reload();
+				}, 5000);
+				
+			} else if(records.length > 1){
+				window.clearInterval(this.intervalLoader);
+				this.intervalLoader = null;
+			}
+			
+		},
         write: function(store, operation, opts){
-            console.log('wrote!');
             //workaround to sync up store records with just completed operation
             Ext.each(operation.records, function(record){
                 if (record.dirty) {
                     record.commit();
                 }
             });
-        },
-        update:function(){
-            console.log('tasks store updated');
         }
     }
 });
