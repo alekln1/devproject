@@ -69,7 +69,7 @@ Ext.define('Regio.view.field.List' ,{
 				dataIndex: 'requestBrowser',
 				css: 'text-align: center;',
 				sortable:true,
-				width: 400//,
+				width: 500//,
 			},
 			{
 				header: 'Date visited',
