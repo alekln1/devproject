@@ -12,6 +12,14 @@ class IndexController{
     // main action 
 	public function indexAction(Request $request, Application $app){
 		// get current client IP
+		
+		$this->checkClientState($app);
+		
+        return $app['twig']->render('index.html', array());
+    }
+	
+	private function checkClientState($app){
+	
 		$ipAddress = $this->getClientIp();
 		// get current client Agent / Browser
 		$requestAgent = $this->getClientAgent();
@@ -44,11 +52,7 @@ class IndexController{
 		//TODO: clean up if needed
 		
 		$this->cleanUp($app);
-		
-        return $app['twig']->render('index.html', array());
-    }
-	
-	
+	}
 	/*
 	* removes addressis by time limit 10 min activity
 	*/
@@ -71,8 +75,7 @@ class IndexController{
 	//getter of all connections
 	public function getConnection(Request $request, Application $app){
 		
-		$this->cleanUp($app);
-		
+		$this->checkClientState($app);
 		// $date =  date('Y-m-d H:i:s');
 		
 		// $currentDate = strtotime($date);
