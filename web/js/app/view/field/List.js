@@ -63,14 +63,14 @@ Ext.define('Regio.view.field.List' ,{
 				sortable:true,
 				width: 100//,
 			},
-			{
-				header: 'Browser',
-				tooltip: 'current active browser',
-				dataIndex: 'requestBrowser',
-				css: 'text-align: center;',
-				sortable:true,
-				width: 500//,
-			},
+			// {
+				// header: 'Browser',
+				// tooltip: 'current active browser',
+				// dataIndex: 'requestBrowser',
+				// css: 'text-align: center;',
+				// sortable:true,
+				// width: 500//,
+			// },
 			{
 				header: 'Date visited',
 				tooltip: 'date visited',

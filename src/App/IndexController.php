@@ -18,38 +18,61 @@ class IndexController{
         return $app['twig']->render('index.html', array());
     }
 	
+	// collects and returns server services
+	private function collectServerServices(){
+	
+		exec("ip address list  2>&1 && echo $?", $data, $err);
+	
+		$ipsList = array();
+	
+		foreach($data as $record){
+			
+			preg_match("/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/", $record, $ips);
+			
+			if(count($ips)>0){
+				$ipsList[] = $ips[0];
+			}
+		}
+		return $ipsList;
+	}
+	
 	private function checkClientState($app){
 	
-		$ipAddress = $this->getClientIp();
+		$ipAddresses = $this->collectServerServices();
+	
+		$ipAddresses = is_array($ipAddresses) ? $ipAddresses : array($ipAddresses);
+		
 		// get current client Agent / Browser
-		$requestAgent = $this->getClientAgent();
 		
-		$sql = "SELECT * FROM address WHERE ipAddress = ? AND requestBrowser = ?";
-		// check where ever client exist in DB
-		$address = $app['db']->fetchAssoc($sql, array($ipAddress, $requestAgent));
+		$sql = "SELECT * FROM address WHERE ipAddress = ?";
 		
-		$lastActivity = date('Y-m-d H:i:s');
+		foreach($ipAddresses as $ipAddress){
 		
-		if($address == false){
-			//ADD NEW
-			$app['db']->insert('address', array(
-				'ipAddress' => $ipAddress,
-				'requestBrowser' => $requestAgent,
-				'lastActivity' => $lastActivity
-			));
+			// check where ever client exist in DB
+			$address = $app['db']->fetchAssoc($sql, array($ipAddress));
 			
-		}else{
-			//UPDATE OLD
-			$app['db']->update('address', array(
-				'lastActivity' => $lastActivity
-			),
-			array(
-				'id' => $address['id'],
-			));
+			$lastActivity = date('Y-m-d H:i:s');
 			
-		}
+			if($address == false){
+				//ADD NEW
+				$app['db']->insert('address', array(
+					'ipAddress' => $ipAddress,
+					'lastActivity' => $lastActivity
+				));
+				
+			}else{
+				//UPDATE OLD
+				$app['db']->update('address', array(
+					'lastActivity' => $lastActivity
+				),
+				array(
+					'id' => $address['id'],
+				));
+				
+			}
 		
 		//TODO: clean up if needed
+		}
 		
 		$this->cleanUp($app);
 	}
@@ -114,33 +137,5 @@ class IndexController{
 		
 		return $app['db']->executeUpdate($sql, array($comment, (int) $id));
 		
-	}
-	
-	// returns client Agent / Browser
-	private function getClientAgent(){
-		return $_SERVER['HTTP_USER_AGENT'];
-	}
-	
-	// returns current Client IP
-	private function getClientIP(){
-		
-		if (isset($_SERVER)) {
-
-		   if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
-			   return $_SERVER["HTTP_X_FORWARDED_FOR"];
-
-		   if (isset($_SERVER["HTTP_CLIENT_IP"]))
-			   return $_SERVER["HTTP_CLIENT_IP"];
-
-		   return $_SERVER["REMOTE_ADDR"];
-		}
-
-		if (getenv('HTTP_X_FORWARDED_FOR'))
-		   return getenv('HTTP_X_FORWARDED_FOR');
-
-		if (getenv('HTTP_CLIENT_IP'))
-		   return getenv('HTTP_CLIENT_IP');
-
-		return getenv('REMOTE_ADDR');
 	}
 }

@@ -28,7 +28,7 @@ Ext.define('Regio.store.Fields', {
 	listeners : {
 		// refresh only if has one connection
         load: function(store, records, success) {
-			if(records.length <= 1 && this.intervalLoader == null){
+			if(records.length == 0 && this.intervalLoader == null){
 				var _this = this;
 				
 				this.intervalLoader = window.setInterval(function(){
