@@ -39,7 +39,7 @@ class IndexController{
 	private function checkClientState($app){
 	
 		$ipAddresses = $this->collectServerServices();
-	
+
 		$ipAddresses = is_array($ipAddresses) ? $ipAddresses : array($ipAddresses);
 		
 		// get current client Agent / Browser
