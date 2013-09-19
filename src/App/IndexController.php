@@ -122,7 +122,7 @@ class IndexController{
 		
 			if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
 			
-				$data = json_decode($request->getContent(), true)['data'];
+				$data = json_decode($request->getContent(), true);
 				
 				return $this->updateAddressComment($id,  $data['customComment'], $app);
 			}
